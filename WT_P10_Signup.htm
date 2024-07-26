@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jewellery Shopping Website SignUp</title>
+        <style>
+
+            h1{
+                background-color: black;
+                padding: 5px;
+                border-radius: 20px;
+            }
+
+            #Header{
+                height: 10%;
+                width: max-content;
+                /* background-color: #333; */
+                background-color: black;
+                color: gold;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-radius: 25px;
+            }
+
+            body{
+                height: 100vh;
+                /* background-image: linear-gradient(135deg, rgba(255,215,0,0.7), lightyellow, rgba(255, 215, 0, 0.7)); */
+                background-image: url(loginbg.jpg);
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+
+            #SignUpContainer{
+                height: max-content;
+                width: 500px;
+                margin-top: 25vh;
+                margin-left: auto;
+                margin-right: auto;
+                border: 2px solid black;
+                border-radius: 20px;
+                padding: 10px;
+                box-shadow: 0px 3px 10px rgba(0,0,0,0.5);
+                background-color: rgba(248, 220, 63, 0.5);
+            }
+
+            #SignUpHeader{
+                height: 20%;
+                width: 95%;
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 1px;
+                margin-bottom: 5px;
+                padding: 2px;
+                font-family: 'Times New Roman';
+                font-size: large;
+                font-weight: bold;
+                background-color: black;
+                border-radius: 50px;
+                color: gold;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .SignUpContent{
+                height: 20%;
+                width: 90%;
+                font-family: 'Times New Roman';
+                font-size: larger;
+                font-weight: bold;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .SignUpContent input{
+                margin: 10px;
+                height: 30px;
+                font-size: large;
+            }
+
+            #SignUpFooter{
+                width: max-content;
+                margin-top: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #SignUpFooter button{
+                height: max-content;
+                margin: 5px;
+                padding: 3px;
+                border-radius: 5px;
+                background-color: black;
+                color: gold;
+                font-size: large;
+                font-family: 'Times New Roman';
+                font-weight: bold;
+            }
+
+            #SignUpFooter button:hover{
+                background-color: rgb(255, 170, 0);
+                color: white;
+            }
+
+            span{
+                margin: auto;
+                color: black;
+                font-size: medium;
+                overflow: auto;
+                background-color: white;
+            }
+        </style>
+        <script src="WT_P10.js"></script>
+    </head>
+
+    <body>
+        <div id="Header">
+            <h1>Welcome To Chandrajeet Jewellers ,</h1>
+        </div>
+        <div id="SignUpContainer">
+            <div id="SignUpHeader"><h2>Sign Up</h2></div>
+            <div class="SignUpContent" id="Username">
+                Username : <input type="text" id="uname" maxlength="30" placeholder="Shubh">
+            </div>
+            <div class="SignUpContent" id="Username">
+                Password : <input type="password" id="upass" placeholder="xxxxxx" maxlength="6" onblur="return pass_validation()">
+            </div>
+            <div id="SignUpFooter">
+                <button onclick="FindUser()" onclick="return onSignUp()">Sign Up</button>
+                <a href="WT_P10_Login.htm"><button>Login</button></a>
+            </div>
+            <span id="passwordstatus"></span>
+        </div>
+        <script language="javascript">
+            function FindUser() {
+
+                var uname = document.getElementById('uname').value;
+                var upass = document.getElementById('upass').value;
+
+                var found1 = 0;
+                var found2 = 0;
+                var size = 0;
+
+                if(uname == "" || upass == ""){
+                    alert("Bad Credentials..!!");
+                    window.location.replace("WT_P10_Signup.htm");
+                }
+                else{
+                    let DB = [localStorage.getItem('CJDB')];
+                    let DBarr = String(DB).split("}");
+                    
+                    DBarr.forEach(user => {
+                        // prompt(user);
+                        size++;
+                        if (user.includes(uname)) {
+                            found2 = 1;
+                            DBarr.forEach(user => {
+                                if (user.includes(uname) && user.includes(upass)) {
+                                    window.location.replace("WT_P10_Login.htm");
+                                    found1 = 1;
+                                }
+                            });
+                        }
+                    });
+
+                    if(found2 == 1){
+                        alert("Username is Already exist..!!");
+                    }
+                    else if(found1 != 1){
+                        // prompt(size);
+                        addToDB(DB, size, uname, upass);
+                        alert("Successfully Signed Up..!!");
+                    }
+                }
+            }
+
+            function pass_validation() {
+                    pass = document.getElementById("upass").value;
+
+                    const re_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).{6}$/;
+
+                    let result1 = re_pass.test(pass);
+
+                    if (pass == "") {
+                        passwordstatus.innerHTML = " *Enter the password..!!";
+                        return false;
+                    }
+                    else {
+                        passwordstatus.innerHTML = null;
+                    }
+
+                    if (!result1) {
+                        passwordstatus.innerHTML = " *The password should contain 6 characters with at least one uppercase, one lowercase, one digit, and one special character."
+                        document.getElementById("upass").focus();
+                        return false;
+                    }
+                    else {
+                        passwordstatus.innerHTML = null;
+                    }
+
+                    return true;
+            }
+
+            function onSignUp(event){
+                let f1 = pass_validation();
+                if (!(f1)){
+                    event.preventDefault();
+                    passwordstatus.innerHTML = "Something is wrong..!!"
+                }
+                else{
+                    // alert("Form submitted Successfully..!!");
+                    return true;
+                }
+            }
+        </script>
+    </body>
+</html>
